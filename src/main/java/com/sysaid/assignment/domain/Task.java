@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class Task implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 	private String activity;
 	private Float accessibility;
 	private String type;

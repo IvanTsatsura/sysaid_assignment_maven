@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<header th:insert="blocks/header :: header">
+    <div th:with="userName=${userName}"></div>
+</header>
+<div class="container mt-5">
+    <h5>Find Tasks Of Type</h5>
+    <h7 class="mb-15">"social", "relaxation", "busywork", "music" and etc.</h7>
+    <form th:action="@{'/tasks/' + ${userName}}" method="get">
+        <input type="text" name="type" class="form-control"><br/>
+        <button type="submit" class="btn btn-success">SELECT</button>
+    </form>
+</div>
+<div class="container mt-5">
+    <div th:each="task : ${tasks}" class="alert alert-info mt-2">
+        <h6>Activity: <span th:text="${task.activity}"/></h6>
+        <h6>Type: <span th:text="${task.type}"/></h6>
+        <h6>Key: <span th:text="${task.key}"/></h6>
+    </div>
+</div>
+</body>
+</html>

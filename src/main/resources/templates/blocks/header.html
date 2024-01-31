@@ -1,0 +1,21 @@
+<div th:fragment="header">
+    <div class="w-lg-75 mx-2 mx-lg-auto position-relative z-2 px-lg-3 py-1 shadow-5 bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark p-0" id="navbar">
+            <div class="container px-sm-0">
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav gap-2 mx-lg-auto">
+                        <li class="nav-item"><a class="nav-link rounded-pill" th:href="@{'/' + ${userName}}">Task Of The Day</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link rounded-pill" th:href="@{'/tasks/' + ${userName}}">Tasks</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link rounded-pill"
+                                                th:href="@{'/wishlist/' + ${userName}}">Wishlist</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link rounded-pill" th:href="@{'/completed/' + ${userName}}">Completed Tasks</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

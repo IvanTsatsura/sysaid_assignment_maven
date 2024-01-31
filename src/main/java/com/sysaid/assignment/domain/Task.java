@@ -1,6 +1,7 @@
 package com.sysaid.assignment.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 /**
@@ -78,8 +79,17 @@ public class Task implements Serializable {
 		this.key = key;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Task task = (Task) o;
+		return Objects.equals(activity, task.activity) && Objects.equals(accessibility, task.accessibility) && Objects.equals(type, task.type) && Objects.equals(participants, task.participants) && Objects.equals(price, task.price) && Objects.equals(link, task.link) && Objects.equals(key, task.key);
+	}
 
-
-
+	@Override
+	public int hashCode() {
+		return Objects.hash(activity, accessibility, type, participants, price, link, key);
+	}
 }
 

@@ -3,30 +3,18 @@ package com.sysaid.assignment.data;
 import com.sysaid.assignment.domain.Task;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FakeDB {
     @Value("${external.boredapi.baseURL}")
     private String baseUrl;
     private static FakeDB dataBase;
-    private List<String> users = new ArrayList<>();
-    private List<Task> tasks = new ArrayList<>();
+    private Set<String> users = new HashSet<>();
+    private Set<Task> tasks = new HashSet<>();
     private Map<String, ArrayList<Task>> usersCompletedTasks = new HashMap<>();
     private Map<String, ArrayList<Task>> usersWishLists = new HashMap<>();
+    private Map<Task, Integer> ratings = new HashMap<>();
     private FakeDB(){
-        /*users.add("Alex");
-        users.add("Bob");
-        users.add("John");
-        users.add("Sasha");
-        users.add("Anna");
-        users.add("Diana");
-        for (String user : users){
-            usersCompletedTasks.put(user, new ArrayList<>());
-            usersWishLists.put(user, new ArrayList<>());
-        }*/
     }
 
     public static synchronized FakeDB getDB(){
@@ -37,25 +25,26 @@ public class FakeDB {
         return dataBase;
     }
 
-    public void addTask(Task task){
-        tasks.add(task);
+    public boolean addTask(Task task){
+        if (!tasks.contains(task)){
+            tasks.add(task);
+            ratings.put(task, 0);
+            return true;
+        }
+
+        return false;
     }
 
-    public void addUser(String user) throws Exception {
-        if(users.contains(user)){
-            throw new Exception("sddsd");
+    public void addUser(String user){
+        if (!users.contains(user)){
+            users.add(user);
+            usersCompletedTasks.put(user, new ArrayList<>());
+            usersWishLists.put(user, new ArrayList<>());
         }
-        users.add(user);
-        usersCompletedTasks.put(user, new ArrayList<>());
-        usersWishLists.put(user, new ArrayList<>());
     }
 
     public List<Task> getAllTasks(){
         return new ArrayList<>(tasks);
-    }
-
-    public List<String> getAllUsers(){
-        return new ArrayList<>(users);
     }
 
     public void addToCompleted(String user, Task task){
@@ -66,21 +55,19 @@ public class FakeDB {
         usersWishLists.get(user).add(task);
     }
 
-    public List<Task> findUserCompleted(String user){
-        List<Task> completedTasks = null;
-        if (usersCompletedTasks.containsKey(user)){
-            completedTasks = new ArrayList<>(usersCompletedTasks.get(user));
+    public Collection<Task> findUserCompleted(String user){
+        if (!users.contains(user)){
+            addUser(user);
         }
 
-        return completedTasks;
+        return new HashSet<>(usersCompletedTasks.get(user));
     }
 
-    public List<Task> findUserWishlist(String user){
-        List<Task> wishlist = null;
-        if (usersWishLists.containsKey(user)){
-            wishlist = new ArrayList<>(usersWishLists.get(user));
+    public Collection<Task> findUserWishlist(String user){
+        if (!users.contains(user)){
+            addUser(user);
         }
 
-        return wishlist;
+        return new HashSet<>(usersWishLists.get(user));
     }
 }

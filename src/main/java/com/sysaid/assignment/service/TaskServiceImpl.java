@@ -33,9 +33,11 @@ public class TaskServiceImpl{
                     .limit(10)
                     .collect(Collectors.toList());
             while (uncompletedTasks.size() < 10){
-                Task temp = addTask();
-                if (temp != null && temp.getType().equals(type)){
-                    uncompletedTasks.add(temp);
+                String endpointUrl = String.format("%s/activity?type=%s", baseUrl, type);
+                RestTemplate template = new RestTemplate();
+                Task newTask = template.getForObject(endpointUrl, Task.class);
+                if (dB.addTask(newTask)){
+                    uncompletedTasks.add(newTask);
                 }
             }
         }
@@ -45,7 +47,7 @@ public class TaskServiceImpl{
     public Task getRandomTask() {
         List<Task> tasks = dB.getAllTasks();
         if (tasks == null || tasks.size() == 0){
-            Task temp = addTask();
+            Task temp = addRandomTaskFromExternal();
             return temp;
         }
         int length = tasks.size();
@@ -64,7 +66,15 @@ public class TaskServiceImpl{
         return new ResponseEntity<>(newTask, HttpStatus.OK);
     }
 
-    public Task addTask() {
+    public boolean addTaskByKeyFromExternal(String key){
+        String endpointUrl = String.format("%s/activity?key=%s", baseUrl, key);
+        RestTemplate template = new RestTemplate();
+        Task newTask = template.getForObject(endpointUrl, Task.class);
+
+        return dB.addTask(newTask);
+    }
+
+    public Task addRandomTaskFromExternal() {
         String endpointUrl = String.format("%s/activity", baseUrl);
         RestTemplate template = new RestTemplate();
         Task newTask = template.getForObject(endpointUrl, Task.class);
@@ -72,6 +82,24 @@ public class TaskServiceImpl{
             newTask = null;
         }
         return newTask;
+    }
+
+    public boolean addTask(Task task){
+        return dB.addTask(task);
+    }
+
+    public boolean deleteTask(String taskKey){
+        Task task = dB.getAllTasks()
+                .stream()
+                .filter(x -> (x.getKey()).equals(taskKey))
+                .findFirst()
+                .orElse(null);
+
+        return dB.deleteTask(task);
+    }
+
+    public boolean updateTask(Task task){
+        return dB.updateTask(task);
     }
 
     public ResponseEntity<List<Task>> getAllTasks(){

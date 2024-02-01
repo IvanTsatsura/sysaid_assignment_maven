@@ -13,7 +13,7 @@ public class FakeDB {
     private Set<Task> tasks = new HashSet<>();
     private Map<String, ArrayList<Task>> usersCompletedTasks = new HashMap<>();
     private Map<String, ArrayList<Task>> usersWishLists = new HashMap<>();
-    private Map<Task, Integer> ratings = new HashMap<>();
+  
     private FakeDB(){
     }
 
@@ -28,11 +28,23 @@ public class FakeDB {
     public boolean addTask(Task task){
         if (!tasks.contains(task)){
             tasks.add(task);
-            ratings.put(task, 0);
             return true;
         }
 
         return false;
+    }
+
+    public boolean deleteTask(Task task){
+        return tasks.remove(task);
+    }
+
+    public boolean updateTask(Task task){
+        boolean successfully = false;
+        if (tasks.remove(task)){
+            successfully = tasks.add(task);
+        }
+
+        return successfully;
     }
 
     public void addUser(String user){
@@ -43,16 +55,44 @@ public class FakeDB {
         }
     }
 
-    public List<Task> getAllTasks(){
+    public ArrayList<Task> getAllTasks(){
         return new ArrayList<>(tasks);
     }
 
-    public void addToCompleted(String user, Task task){
-        usersCompletedTasks.get(user).add(task);
+    public boolean addToCompleted(String user, Task task){
+        return usersCompletedTasks.get(user).add(task);
     }
 
-    public void addToWishlist(String user, Task task){
-        usersWishLists.get(user).add(task);
+    public boolean deleteFromCompleted(String user, Task task){
+        return usersCompletedTasks.get(user).remove(task);
+    }
+
+    public boolean updateInCompleted(String user, Task task){
+        int index = usersCompletedTasks.get(user).indexOf(task);
+        if (index == -1){
+            return false;
+        }
+        usersCompletedTasks.get(user).set(index, task);
+
+        return true;
+    }
+
+    public boolean addToWishlist(String user, Task task){
+        return usersWishLists.get(user).add(task);
+    }
+
+    public boolean deleteFromWishlist(String user, Task task){
+        return usersWishLists.get(user).remove(task);
+    }
+
+    public boolean updateInWishlist(String user, Task task){
+        int index = usersWishLists.get(user).indexOf(task);
+        if (index == -1){
+            return false;
+        }
+        usersWishLists.get(user).set(index, task);
+
+        return true;
     }
 
     public Collection<Task> findUserCompleted(String user){

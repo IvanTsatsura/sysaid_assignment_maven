@@ -18,15 +18,27 @@ public class WishlistService {
         return dB.findUserWishlist(user);
     }
 
-    public void addTaskToWishlist(String user, String taskKey){
+    public boolean addTaskToWishlist(String user, String taskKey){
         Task task = dB.getAllTasks()
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
                 .findFirst()
                 .orElse(null);
 
-        if (task != null){
-            dB.addToWishlist(user, task);
-        }
+        return dB.addToWishlist(user, task);
+    }
+
+    public boolean deleteTaskFromWishlist(String user, String taskKey){
+        Task task = dB.findUserWishlist(user)
+                .stream()
+                .filter(x -> (x.getKey()).equals(taskKey))
+                .findFirst()
+                .orElse(null);
+
+        return dB.deleteFromWishlist(user, task);
+    }
+
+    public boolean updateTaskInWishlist(String user, Task task){
+        return dB.updateInWishlist(user, task);
     }
 }

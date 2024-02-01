@@ -18,15 +18,27 @@ public class CompleteTaskService {
         return dB.findUserCompleted(user);
     }
 
-    public void addTaskToCompleted(String user, String taskKey){
+    public boolean addTaskToCompleted(String user, String taskKey){
         Task task = dB.getAllTasks()
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
                 .findFirst()
                 .orElse(null);
 
-        if (task != null){
-            dB.addToCompleted(user, task);
-        }
+        return dB.addToCompleted(user, task);
+    }
+
+    public boolean deleteTaskFromCompleted(String user, String taskKey){
+        Task task = dB.findUserCompleted(user)
+                .stream()
+                .filter(x -> (x.getKey()).equals(taskKey))
+                .findFirst()
+                .orElse(null);
+
+        return dB.deleteFromCompleted(user, task);
+    }
+
+    public boolean updateTaskInWishlist(String user, Task task){
+        return dB.updateInCompleted(user, task);
     }
 }

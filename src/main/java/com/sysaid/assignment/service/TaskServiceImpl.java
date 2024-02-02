@@ -41,8 +41,6 @@ public class TaskServiceImpl{
                     uncompletedTasks.add(newTask);
 
                 }
-                System.out.println(newTask);
-                System.out.println(endpointUrl);
                 count++;
             }
         }

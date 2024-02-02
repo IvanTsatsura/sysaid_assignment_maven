@@ -21,6 +21,7 @@ public class TaskServiceImpl{
     }
 
     public List<Task> getUncompletedTasks(String user, String type){
+        int count = 0;
         List<Task> uncompletedTasks = new ArrayList<>();
         if (type != null && !type.isEmpty()){
             Set<Task> completedTasks = new HashSet<>(dB.findUserCompleted(user));
@@ -32,13 +33,16 @@ public class TaskServiceImpl{
                             !wishlist.contains(x))
                     .limit(10)
                     .collect(Collectors.toList());
-            while (uncompletedTasks.size() < 10){
+            while (uncompletedTasks.size() < 10 && count < 20){
                 String endpointUrl = String.format("%s/activity?type=%s", baseUrl, type);
                 RestTemplate template = new RestTemplate();
                 Task newTask = template.getForObject(endpointUrl, Task.class);
                 if (dB.addTask(newTask)){
                     uncompletedTasks.add(newTask);
                 }
+                System.out.println(newTask);
+                System.out.println(endpointUrl);
+                count++;
             }
         }
         return uncompletedTasks;

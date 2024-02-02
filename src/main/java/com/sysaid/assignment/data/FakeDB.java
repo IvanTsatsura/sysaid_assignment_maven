@@ -13,6 +13,7 @@ public class FakeDB {
     private Set<Task> tasks = new HashSet<>();
     private Map<String, ArrayList<Task>> usersCompletedTasks = new HashMap<>();
     private Map<String, ArrayList<Task>> usersWishLists = new HashMap<>();
+  
     private FakeDB(){
     }
 

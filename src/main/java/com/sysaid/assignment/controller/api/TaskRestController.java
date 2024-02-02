@@ -5,10 +5,10 @@ import com.sysaid.assignment.service.TaskServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collection;
 
 @RestController
+
 @RequestMapping("/api")
 public class TaskRestController {
     private final TaskServiceImpl taskService;
@@ -16,6 +16,7 @@ public class TaskRestController {
     /**
      * constructor for dependency injection
      *
+
      * @param taskService
      */
     public TaskRestController(TaskServiceImpl taskService) {
@@ -31,6 +32,7 @@ public class TaskRestController {
      */
     @GetMapping("/uncompleted-tasks/{user}")
     public ResponseEntity<Collection<Task>> getUncompletedTasks(@PathVariable("user") String user, @RequestParam(name = "type", required = false) String type) {
+
         Collection<Task> uncompletedTasks = taskService.getUncompletedTasks(user, type);
         return new ResponseEntity<>(uncompletedTasks, HttpStatus.OK);
     }
@@ -82,4 +84,5 @@ public class TaskRestController {
 
         return ResponseEntity.notFound().build();
     }
+
 }

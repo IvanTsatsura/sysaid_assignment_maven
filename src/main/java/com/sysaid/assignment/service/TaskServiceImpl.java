@@ -39,6 +39,7 @@ public class TaskServiceImpl{
                 Task newTask = template.getForObject(endpointUrl, Task.class);
                 if (dB.addTask(newTask)){
                     uncompletedTasks.add(newTask);
+
                 }
                 System.out.println(newTask);
                 System.out.println(endpointUrl);
@@ -52,6 +53,7 @@ public class TaskServiceImpl{
         List<Task> tasks = dB.getAllTasks();
         if (tasks == null || tasks.size() == 0){
             Task temp = addRandomTaskFromExternal();
+
             return temp;
         }
         int length = tasks.size();

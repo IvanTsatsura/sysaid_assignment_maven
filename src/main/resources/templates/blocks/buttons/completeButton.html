@@ -1,0 +1,6 @@
+<div th:fragment="completeButton" class="container">
+    <form th:action="@{'/tasks/' + ${userName}}" method="post">
+        <input type="hidden" name="complete" required>
+        <button type="submit" class="btn btn btn-success">COMPLETE</button>
+    </form>
+</div>

@@ -1,0 +1,6 @@
+<div th:fragment="toWishlistButton" class="container">
+    <form th:action="@{'/tasks/' + ${userName}}" method="post">
+        <input type="hidden" name="wishlist" required>
+        <button type="submit" class="btn btn-warning text-white">ADD TO WISHLIST</button>
+    </form>
+</div>

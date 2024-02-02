@@ -1,13 +1,17 @@
 package com.sysaid.assignment.controller;
 
 import com.sysaid.assignment.domain.Task;
+import com.sysaid.assignment.service.CompleteTaskService;
 import com.sysaid.assignment.service.TaskServiceImpl;
 import com.sysaid.assignment.service.UserService;
+import com.sysaid.assignment.service.WishlistService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -20,13 +24,20 @@ import java.util.List;
 public class TaskController {
 	private final TaskServiceImpl taskService;
 	private final UserService userService;
+	private final WishlistService wishlistService;
+	private final CompleteTaskService completeTaskService;
 	/**
 	 * constructor for dependency injection
 	 * @param taskService
 	 */
-	public TaskController(TaskServiceImpl taskService, UserService userService) {
+	public TaskController(TaskServiceImpl taskService,
+						  UserService userService,
+						  WishlistService wishlistService,
+						  CompleteTaskService completeTaskService) {
 		this.taskService = taskService;
 		this.userService = userService;
+		this.wishlistService = wishlistService;
+		this.completeTaskService = completeTaskService;
 	}
 
 	@GetMapping("/{user}")
@@ -59,6 +70,15 @@ public class TaskController {
 		Task taskOfTheDay = taskService.getRandomTask();
 		model.addAttribute("taskOfTheDay", taskOfTheDay);
 		return "taskOfTheDay";
+	}
+
+	@PostMapping("/tasks/{user}")
+	public ResponseEntity<?> addTaskToWishList(@PathVariable ("user") String user,
+											   @RequestParam ("taskKey") String taskKey,
+											   @RequestParam (name = "actionType") String actionType,
+											   Model model){
+		wishlistService.addTaskToWishlist(user, taskKey);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/add-new-task")

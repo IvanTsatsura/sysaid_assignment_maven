@@ -1,8 +1,8 @@
 To run the application in cmd use mvn exec:java -Dexec.mainClass="com.sysaid.assignment.AssignmentApplication", then use "http://localhost:8080/userName".  
   
-Api:  
-To add a random task from external api to a local fakeDB: /add-new-task  
-To add a task by key from external api to a local fakeDB: /api/add-task-by-key/{taskKey}  
+API:  
+To add a random task from external API to a local fakeDB: /add-new-task  
+To add a task by key from external API to a local fakeDB: /api/add-task-by-key/{taskKey}  
 To add a task to a user's completed tasks: /api/completed-tasks/add-task/{userName}/{taskKey}  
 To add a task to a user's wishlist: /api/wishlist/add-task/{userName}/{taskKey}  
 

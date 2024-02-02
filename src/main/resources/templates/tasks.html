@@ -22,6 +22,10 @@
         <h6>Activity: <span th:text="${task.activity}"/></h6>
         <h6>Type: <span th:text="${task.type}"/></h6>
         <h6>Key: <span th:text="${task.key}"/></h6>
+        <div class="container mt-5 d-flex flex-row-reverse">
+            <span th:insert="blocks/buttons/completeButton :: completeButton"></span>
+            <span th:insert="blocks/buttons/toWishlistButton :: toWishlistButton"></span>
+        </div>
     </div>
 </div>
 </body>

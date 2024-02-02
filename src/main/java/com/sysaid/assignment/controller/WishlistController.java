@@ -1,29 +1,28 @@
 package com.sysaid.assignment.controller;
 
 import com.sysaid.assignment.domain.Task;
-import com.sysaid.assignment.service.UserService;
+import com.sysaid.assignment.service.CompleteTaskService;
 import com.sysaid.assignment.service.WishlistService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/wishlist")
 public class WishlistController {
     private final WishlistService wishlistService;
-    private final UserService userService;
+    private final CompleteTaskService completeTaskService;
 
-    public WishlistController(WishlistService wishlistService, UserService userService){
+    public WishlistController(WishlistService wishlistService,
+                              CompleteTaskService completeTaskService){
         this.wishlistService = wishlistService;
-        this.userService = userService;
+        this.completeTaskService = completeTaskService;
     }
 
-    @GetMapping("/wishlist/{user}")
+    @GetMapping("/{user}")
     public String getWishlist(@PathVariable ("user") String user, Model model){
         List<Task> wishlist = wishlistService.findUserWishlist(user)
                 .stream()
@@ -33,10 +32,21 @@ public class WishlistController {
         return "wishlist.html";
     }
 
-    @GetMapping("/wishlist/add-task/{user}/{taskKey}")
-    public ResponseEntity<?> addTaskToWishList(@PathVariable ("user") String user,
-                                               @PathVariable ("taskKey") String taskKey){
-        wishlistService.addTaskToWishlist(user, taskKey);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/{user}")
+    public String fromWishlistToCompleted(@PathVariable("user") String user,
+                                @RequestParam(name = "taskKey") String taskKey,
+                                @RequestParam(name = "buttonType") String buttonType,
+                                Model model) {
+        if (buttonType.equals("complete")){
+            completeTaskService.addTaskToCompleted(user, taskKey);
+        }
+        wishlistService.deleteTaskFromWishlist(user, taskKey);
+
+        List<Task> wishlist = wishlistService.findUserWishlist(user)
+                .stream()
+                .collect(Collectors.toList());
+        model.addAttribute("userName", user);
+        model.addAttribute("wishlist", wishlist);
+        return "wishlist.html";
     }
 }

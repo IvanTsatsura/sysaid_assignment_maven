@@ -14,7 +14,12 @@
         <h6>Activity: <span th:text="${task.activity}"/></h6>
         <h6>Type: <span th:text="${task.type}"/></h6>
         <div class="container mt-5 d-flex flex-row-reverse">
-            <span th:insert="blocks/buttons/completeButton :: completeButton"></span>
+                <form th:action="@{'/wishlist/' + ${userName}}" method="post">
+                    <input type="hidden" name="buttonType" value="complete" required>
+                    <input type="hidden" name="taskKey" th:value="${task.key}" required>
+                    <input type="hidden" name="taskType" th:value="${task.type}" required>
+                    <button type="submit" class="btn btn btn-success">COMPLETE</button>
+                </form>
         </div>
     </div>
 </div>

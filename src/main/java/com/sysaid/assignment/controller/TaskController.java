@@ -5,7 +5,6 @@ import com.sysaid.assignment.service.CompleteTaskService;
 import com.sysaid.assignment.service.TaskServiceImpl;
 import com.sysaid.assignment.service.UserService;
 import com.sysaid.assignment.service.WishlistService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,73 +21,87 @@ import java.util.List;
 
 @Controller
 public class TaskController {
-	private final TaskServiceImpl taskService;
-	private final UserService userService;
-	private final WishlistService wishlistService;
-	private final CompleteTaskService completeTaskService;
-	/**
-	 * constructor for dependency injection
-	 * @param taskService
-	 */
-	public TaskController(TaskServiceImpl taskService,
-						  UserService userService,
-						  WishlistService wishlistService,
-						  CompleteTaskService completeTaskService) {
-		this.taskService = taskService;
-		this.userService = userService;
-		this.wishlistService = wishlistService;
-		this.completeTaskService = completeTaskService;
-	}
+    private final TaskServiceImpl taskService;
+    private final UserService userService;
+    private final WishlistService wishlistService;
+    private final CompleteTaskService completeTaskService;
 
-	@GetMapping("/{user}")
-	public String taskOfTheDay(@PathVariable ("user") String user, Model model) {
-		userService.addUser(user);
-		model.addAttribute("userName", user);
-		Task taskOfTheDay = taskService.getRandomTask();
-		model.addAttribute("taskOfTheDay", taskOfTheDay);
-		return "taskOfTheDay.html";
-	}
+    /**
+     * constructor for dependency injection
+     *
+     * @param taskService
+     */
+    public TaskController(TaskServiceImpl taskService,
+                          UserService userService,
+                          WishlistService wishlistService,
+                          CompleteTaskService completeTaskService) {
+        this.taskService = taskService;
+        this.userService = userService;
+        this.wishlistService = wishlistService;
+        this.completeTaskService = completeTaskService;
+    }
 
-	/**
-	 * will return uncompleted tasks for given user
-	 * @param user the user which the tasks relevant for
-	 * @param type type of the task
-	 * @return list uncompleted tasks for the user
-	 */
-	@GetMapping("/tasks/{user}")
-	public String getUncompletedTasks(@PathVariable ("user") String user,
-									  @RequestParam(name = "type",required = false) String type,
-									  Model model){
-		List<Task> tasks = taskService.getUncompletedTasks(user, type);
-		model.addAttribute("userName", user);
-		model.addAttribute("tasks", tasks);
-		model.addAttribute("type", type);
-		return "tasks.html";
-	}
-	@GetMapping("/task-of-the-day")
-	public String getTaskOfTheDay(Model model){
-		Task taskOfTheDay = taskService.getRandomTask();
-		model.addAttribute("taskOfTheDay", taskOfTheDay);
-		return "taskOfTheDay";
-	}
+    @GetMapping("/{user}")
+    public String taskOfTheDay(@PathVariable("user") String user, Model model) {
+        userService.addUser(user);
+        model.addAttribute("userName", user);
+        Task taskOfTheDay = taskService.getRandomTask();
+        model.addAttribute("taskOfTheDay", taskOfTheDay);
+        return "taskOfTheDay.html";
+    }
 
-	@PostMapping("/tasks/{user}")
-	public ResponseEntity<?> addTaskToWishList(@PathVariable ("user") String user,
-											   @RequestParam ("taskKey") String taskKey,
-											   @RequestParam (name = "actionType") String actionType,
-											   Model model){
-		wishlistService.addTaskToWishlist(user, taskKey);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+    /**
+     * will return uncompleted tasks for given user
+     *
+     * @param user the user which the tasks relevant for
+     * @param type type of the task
+     * @return list uncompleted tasks for the user
+     */
+    @GetMapping("/tasks/{user}")
+    public String getUncompletedTasks(@PathVariable("user") String user,
+                                      @RequestParam(name = "type", required = false) String type,
+                                      Model model) {
+        List<Task> tasks = taskService.getUncompletedTasks(user, type);
+        model.addAttribute("userName", user);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("type", type);
+        return "tasks.html";
+    }
 
-	@GetMapping("/add-new-task")
-	public ResponseEntity<Task> addNewTask(){
-		return taskService.addNewTask();
-	}
+    @GetMapping("/task-of-the-day")
+    public String getTaskOfTheDay(Model model) {
+        Task taskOfTheDay = taskService.getRandomTask();
+        model.addAttribute("taskOfTheDay", taskOfTheDay);
+        return "taskOfTheDay";
+    }
 
-	@GetMapping("/all-tasks")
-	public ResponseEntity<List<Task>> getAllTasks(){
-		return taskService.getAllTasks();
-	}
+    @PostMapping("/tasks/{user}")
+    public String addTaskToUser(@PathVariable("user") String user,
+                                    @RequestParam(name = "taskKey") String taskKey,
+                                    @RequestParam(name = "buttonType") String buttonType,
+                                    @RequestParam(name = "taskType") String taskType,
+                                    Model model) {
+        if (buttonType.equals("wishlist")){
+            wishlistService.addTaskToWishlist(user, taskKey);
+        }else if (buttonType.equals("complete")){
+            completeTaskService.addTaskToCompleted(user, taskKey);
+        }
+
+        List<Task> tasks = taskService.getUncompletedTasks(user, taskType);
+        model.addAttribute("userName", user);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("type", taskType);
+        return "tasks.html";
+    }
+
+    @GetMapping("/add-new-task")
+    public ResponseEntity<Task> addNewTask() {
+        return taskService.addNewTask();
+    }
+
+    @GetMapping("/all-tasks")
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return taskService.getAllTasks();
+    }
 }
 

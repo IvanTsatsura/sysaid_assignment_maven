@@ -10,25 +10,28 @@ import java.util.Collection;
 public class WishlistService {
     private final FakeDB dB;
 
-    public WishlistService(){
+    public WishlistService() {
         this.dB = FakeDB.getDB();
     }
 
-    public Collection<Task> findUserWishlist(String user){
+    public Collection<Task> findUserWishlist(String user) {
         return dB.findUserWishlist(user);
     }
 
-    public boolean addTaskToWishlist(String user, String taskKey){
+    public boolean addTaskToWishlist(String user, String taskKey) {
         Task task = dB.getAllTasks()
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
                 .findFirst()
                 .orElse(null);
+        if (task != null){
+            task.setRating(task.getRating() + 1);
+        }
 
         return dB.addToWishlist(user, task);
     }
 
-    public boolean deleteTaskFromWishlist(String user, String taskKey){
+    public boolean deleteTaskFromWishlist(String user, String taskKey) {
         Task task = dB.findUserWishlist(user)
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
@@ -38,7 +41,7 @@ public class WishlistService {
         return dB.deleteFromWishlist(user, task);
     }
 
-    public boolean updateTaskInWishlist(String user, Task task){
+    public boolean updateTaskInWishlist(String user, Task task) {
         return dB.updateInWishlist(user, task);
     }
 }

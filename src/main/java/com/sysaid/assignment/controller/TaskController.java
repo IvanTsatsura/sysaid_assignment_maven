@@ -62,6 +62,11 @@ public class TaskController {
                                       @RequestParam(name = "type", required = false) String type,
                                       Model model) {
         List<Task> tasks = taskService.getUncompletedTasks(user, type);
+        if (tasks == null) {
+            String noTypeMessage = String.format("Type: \'%s\' doesn't exist. Please enter another type!",
+                    type);
+            model.addAttribute("noTypeMessage", noTypeMessage);
+        }
         model.addAttribute("userName", user);
         model.addAttribute("tasks", tasks);
         model.addAttribute("type", type);
@@ -77,13 +82,13 @@ public class TaskController {
 
     @PostMapping("/tasks/{user}")
     public String addTaskToUser(@PathVariable("user") String user,
-                                    @RequestParam(name = "taskKey") String taskKey,
-                                    @RequestParam(name = "buttonType") String buttonType,
-                                    @RequestParam(name = "taskType") String taskType,
-                                    Model model) {
-        if (buttonType.equals("wishlist")){
+                                @RequestParam(name = "taskKey") String taskKey,
+                                @RequestParam(name = "buttonType") String buttonType,
+                                @RequestParam(name = "taskType") String taskType,
+                                Model model) {
+        if (buttonType.equals("wishlist")) {
             wishlistService.addTaskToWishlist(user, taskKey);
-        }else if (buttonType.equals("complete")){
+        } else if (buttonType.equals("complete")) {
             completeTaskService.addTaskToCompleted(user, taskKey);
         }
 

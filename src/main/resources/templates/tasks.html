@@ -11,7 +11,7 @@
 </header>
 <div class="container mt-5">
     <h5>Find Tasks Of Type</h5>
-    <h7 class="mb-15">"social", "relaxation", "busywork", "music" and etc.</h7>
+    <h7 class="mb-15">"social", "relaxation", "busywork" and etc.</h7>
     <form th:action="@{'/tasks/' + ${userName}}" method="get">
         <input type="text" name="type" class="form-control"><br/>
         <button type="submit" class="btn btn-success">SELECT</button>
@@ -22,11 +22,15 @@
         <h6>Activity: <span th:text="${task.activity}"/></h6>
         <h6>Type: <span th:text="${task.type}"/></h6>
         <h6>Key: <span th:text="${task.key}"/></h6>
+        <h6>Rating: <span th:text="${task.rating}"/></h6>
         <div class="container mt-5 d-flex flex-row-reverse">
             <span th:insert="blocks/buttons/completeButton :: completeButton"></span>
             <span th:insert="blocks/buttons/toWishlistButton :: toWishlistButton"></span>
         </div>
     </div>
+</div>
+<div class="container mt-5">
+    <h5 class="text-danger"><span th:text="${noTypeMessage}"/></h5>
 </div>
 </body>
 </html>

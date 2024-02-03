@@ -12,18 +12,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class TaskServiceImpl{
+public class TaskServiceImpl {
     private final FakeDB dB;
     @Value("${external.boredapi.baseURL}")
     private String baseUrl;
-    public TaskServiceImpl(){
+
+    public TaskServiceImpl() {
         this.dB = FakeDB.getDB();
     }
 
-    public List<Task> getUncompletedTasks(String user, String type){
+    public List<Task> getUncompletedTasks(String user, String type) {
         int count = 0;
+        String endpointUrl = String.format("%s/activity?type=%s", baseUrl, type);
         List<Task> uncompletedTasks = new ArrayList<>();
-        if (type != null && !type.isEmpty()){
+        if (type != null && !type.isEmpty()) {
             Set<Task> completedTasks = new HashSet<>(dB.findUserCompleted(user));
             Set<Task> wishlist = new HashSet<>(dB.findUserWishlist(user));
             uncompletedTasks = dB.getAllTasks()
@@ -33,13 +35,20 @@ public class TaskServiceImpl{
                             !wishlist.contains(x))
                     .limit(10)
                     .collect(Collectors.toList());
-            while (uncompletedTasks.size() < 10 && count < 20){
-                String endpointUrl = String.format("%s/activity?type=%s", baseUrl, type);
+
+            if (uncompletedTasks.size() == 0) {
                 RestTemplate template = new RestTemplate();
                 Task newTask = template.getForObject(endpointUrl, Task.class);
-                if (dB.addTask(newTask)){
-                    uncompletedTasks.add(newTask);
+                if (newTask.getKey() == null) {
+                    return null;
+                }
+            }
 
+            while (uncompletedTasks.size() < 10 && count < 20) {
+                RestTemplate template = new RestTemplate();
+                Task newTask = template.getForObject(endpointUrl, Task.class);
+                if (dB.addTask(newTask)) {
+                    uncompletedTasks.add(newTask);
                 }
                 count++;
             }
@@ -49,7 +58,7 @@ public class TaskServiceImpl{
 
     public Task getRandomTask() {
         List<Task> tasks = dB.getAllTasks();
-        if (tasks == null || tasks.size() == 0){
+        if (tasks == null || tasks.size() == 0) {
             Task temp = addRandomTaskFromExternal();
 
             return temp;
@@ -64,13 +73,13 @@ public class TaskServiceImpl{
         String endpointUrl = String.format("%s/activity", baseUrl);
         RestTemplate template = new RestTemplate();
         Task newTask = template.getForObject(endpointUrl, Task.class);
-        if (!dB.addTask(newTask)){
+        if (!dB.addTask(newTask)) {
             newTask = null;
         }
         return new ResponseEntity<>(newTask, HttpStatus.OK);
     }
 
-    public boolean addTaskByKeyFromExternal(String key){
+    public boolean addTaskByKeyFromExternal(String key) {
         String endpointUrl = String.format("%s/activity?key=%s", baseUrl, key);
         RestTemplate template = new RestTemplate();
         Task newTask = template.getForObject(endpointUrl, Task.class);
@@ -82,17 +91,17 @@ public class TaskServiceImpl{
         String endpointUrl = String.format("%s/activity", baseUrl);
         RestTemplate template = new RestTemplate();
         Task newTask = template.getForObject(endpointUrl, Task.class);
-        if (!dB.addTask(newTask)){
+        if (!dB.addTask(newTask)) {
             newTask = null;
         }
         return newTask;
     }
 
-    public boolean addTask(Task task){
+    public boolean addTask(Task task) {
         return dB.addTask(task);
     }
 
-    public boolean deleteTask(String taskKey){
+    public boolean deleteTask(String taskKey) {
         Task task = dB.getAllTasks()
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
@@ -102,11 +111,11 @@ public class TaskServiceImpl{
         return dB.deleteTask(task);
     }
 
-    public boolean updateTask(Task task){
+    public boolean updateTask(Task task) {
         return dB.updateTask(task);
     }
 
-    public ResponseEntity<List<Task>> getAllTasks(){
+    public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = dB.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }

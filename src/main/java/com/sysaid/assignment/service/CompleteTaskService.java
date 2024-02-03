@@ -10,25 +10,28 @@ import java.util.Collection;
 public class CompleteTaskService {
     private FakeDB dB;
 
-    public CompleteTaskService(){
+    public CompleteTaskService() {
         this.dB = FakeDB.getDB();
     }
 
-    public Collection<Task> findUserCompleted(String user){
+    public Collection<Task> findUserCompleted(String user) {
         return dB.findUserCompleted(user);
     }
 
-    public boolean addTaskToCompleted(String user, String taskKey){
+    public boolean addTaskToCompleted(String user, String taskKey) {
         Task task = dB.getAllTasks()
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
                 .findFirst()
                 .orElse(null);
+        if (task != null) {
+            task.setRating(task.getRating() + 2);
+        }
 
         return dB.addToCompleted(user, task);
     }
 
-    public boolean deleteTaskFromCompleted(String user, String taskKey){
+    public boolean deleteTaskFromCompleted(String user, String taskKey) {
         Task task = dB.findUserCompleted(user)
                 .stream()
                 .filter(x -> (x.getKey()).equals(taskKey))
@@ -38,7 +41,7 @@ public class CompleteTaskService {
         return dB.deleteFromCompleted(user, task);
     }
 
-    public boolean updateTaskInWishlist(String user, Task task){
+    public boolean updateTaskInWishlist(String user, Task task) {
         return dB.updateInCompleted(user, task);
     }
 }

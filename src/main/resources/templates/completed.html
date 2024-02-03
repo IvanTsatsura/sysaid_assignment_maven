@@ -13,6 +13,7 @@
     <div th:each="task : ${completedTasks}" class="alert alert-info mt-2">
         <h6>Activity: <span th:text="${task.activity}"/></h6>
         <h6>Type: <span th:text="${task.type}"/></h6>
+        <h6>Rating: <span th:text="${task.rating}"/></h6>
     </div>
 </div>
 </body>

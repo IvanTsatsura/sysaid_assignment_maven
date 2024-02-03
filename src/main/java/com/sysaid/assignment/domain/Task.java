@@ -18,6 +18,16 @@ public class Task implements Serializable {
 	private String link;
 	private String key;
 
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	private int rating;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
